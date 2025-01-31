@@ -1,9 +1,8 @@
-import { ChatGpt } from "./ChatGpt";
 import dotenv from "dotenv";
 import * as fs from "fs";
 import * as path from "path";
-import { DeepSeek } from "./DeepSeek";
 import logger from "./utils/logger";
+import { Llm } from "./Llm";
 
 const scrapGitBook = require("scrap-gitbook").default;
 
@@ -28,10 +27,11 @@ const start = async (gitbookUrl: string, outputFile: string) => {
 
     Now, I will ask you questions about this text.`;
 
-    const chatgpt = new ChatGpt(
+    const chatgpt = new Llm(
       `${process.env.API}`,
       promptBase,
-      "gpt-4o-mini"
+      "gpt-4o-mini",
+      "chatgpt"
     );
     await chatgpt.start();
   } catch (error) {

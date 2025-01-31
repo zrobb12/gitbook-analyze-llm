@@ -2,13 +2,15 @@ import OpenAI from "openai";
 import readline from "readline";
 import logger from "./utils/logger";
 
-export class DeepSeek {
+export class Llm {
   openai: OpenAI;
   rl: readline.Interface;
   messages: any;
   model: string;
-  constructor(apiKey: string, promptBase: string, model: string) {
+    name: string;
+  constructor(apiKey: string, promptBase: string, model: string, name: string) {
     this.model = model;
+    this.name = name;
     this.openai = new OpenAI({ apiKey });
     this.rl = readline.createInterface({
       input: process.stdin,
@@ -32,7 +34,7 @@ export class DeepSeek {
     });
 
     const answer = completion.choices[0].message.content;
-    logger.info(`<Bot> : ${answer}`);
+    logger.info(`<Bot ${this.name}> : ${answer}`);
 
     this.messages.push({ role: "assistant", content: answer });
   }
@@ -45,7 +47,7 @@ export class DeepSeek {
     });
 
     this.rl.on("SIGINT", () => {
-      this.rl.question("Are you sure you want to exit? ", (answer) => {
+      this.rl.question(`${this.name} Are you sure you want to exit? `, (answer) => {
         if (answer.match(/^y(es)?$/i)) this.rl.pause();
       });
     });
