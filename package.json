@@ -19,7 +19,7 @@
     "dotenv": "^16.4.7",
     "node-pty": "^1.0.0",
     "openai": "^4.81.0",
-    "scrap-gitbook": "^1.0.7",
+    "scrap-gitbook": "^1.0.8",
     "winston": "^3.17.0"
   }
 }
