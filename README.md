@@ -2,14 +2,39 @@
 
 **LLM analyze GitBook and interact with prompt**
 
-Ce projet permet de télécharger des documents GitBook et de les analyser à l'aide d'un modèle de langage (LLM) comme ChatGPT. Les utilisateurs peuvent poser des questions sur la documentation téléchargée via un terminal.
+This project allows you to download GitBook documents and analyze them using a language model (LLM) like ChatGPT. Users can ask questions about the downloaded documentation via a terminal.
 
 ![Terminal GIF](image/termLlm.gif)
 
-## Cloner le projet
+## Clone the Project
 
-Pour commencer, clone le projet depuis GitHub :
+To get started, clone the project from GitHub:
 
 ```bash
-git clone https://github.com/ton-utilisateur/gitbook-analyze-llm.git
+git clone https://github.com/your-username/gitbook-analyze-llm.git
+
 cd gitbook-analyze-llm
+```
+
+## Install dependencies
+
+```bash
+npm install
+```
+
+## Edit GitBook Url
+
+Go to file index.ts and edit this section:
+
+```typescript
+const gitbookUrl = "https://your-new-gitbook-url.gitbook.io/";
+const outputFile = "your-new-file-name.md";
+```
+
+## Run
+
+After you can run the project
+
+```bash
+npm run build-run
+```
