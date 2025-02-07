@@ -34,13 +34,12 @@ export class Llm {
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
     for (const [index, chunk] of markdownChunks.entries()) {
-        const chunkTokens = chunk.length; // Approximation : 1 char ≈ 1 token
+        const chunkTokens = chunk.length;
         tokensUsed += chunkTokens;
 
-        // Vérification du respect du TPM
         if (tokensUsed > MAX_TOKENS_PER_MIN) {
             console.log("⌛ Waiting for TPM reset...");
-            await sleep(60 * 1000); // Pause de 1 min
+            await sleep(60 * 1000);
             tokensUsed = 0;
         }
 
@@ -50,15 +49,14 @@ export class Llm {
         while (retries < maxRetries) {
             try {
                 console.log(`📤 Sending chunk ${index + 1}...`);
-                await this.askQuestion(chunk); // Envoi du chunk
+                await this.askQuestion(chunk);
                 console.log(`✅ Chunk ${index + 1} sent!`);
 
-                // Respect du RPM en ajoutant un délai après chaque requête
                 if (index < markdownChunks.length - 1) {
                     console.log(`⌛ Waiting ${TIME_BETWEEN_REQUESTS / 1000}s before next request...`);
                     await sleep(TIME_BETWEEN_REQUESTS);
                 }
-                break; // Sortie de la boucle si succès
+                break;
             } catch (error: any) {
                 if (error.response?.status === 429) {
                     const retryAfter = parseInt(error.response.headers["retry-after"] || "20", 10) * 1000;
