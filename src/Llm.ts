@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import readline from "readline";
 import logger from "./utils/logger";
+import { sleep } from "openai/core";
 
 export class Llm {
   openai: OpenAI;
@@ -23,6 +24,59 @@ export class Llm {
       { role: "user", content: promptBase },
     ];
   }
+
+  async sendMarkdownChunks(markdownChunks: string[]) {
+    let tokensUsed = 0;
+    const MAX_TOKENS_PER_MIN = 40000;
+    const MAX_REQUESTS_PER_MIN = 3;
+    const TIME_BETWEEN_REQUESTS = 60 * 1000 / MAX_REQUESTS_PER_MIN; // 20s entre chaque requête
+
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    for (const [index, chunk] of markdownChunks.entries()) {
+        const chunkTokens = chunk.length; // Approximation : 1 char ≈ 1 token
+        tokensUsed += chunkTokens;
+
+        // Vérification du respect du TPM
+        if (tokensUsed > MAX_TOKENS_PER_MIN) {
+            console.log("⌛ Waiting for TPM reset...");
+            await sleep(60 * 1000); // Pause de 1 min
+            tokensUsed = 0;
+        }
+
+        let retries = 0;
+        const maxRetries = 5;
+
+        while (retries < maxRetries) {
+            try {
+                console.log(`📤 Sending chunk ${index + 1}...`);
+                await this.askQuestion(chunk); // Envoi du chunk
+                console.log(`✅ Chunk ${index + 1} sent!`);
+
+                // Respect du RPM en ajoutant un délai après chaque requête
+                if (index < markdownChunks.length - 1) {
+                    console.log(`⌛ Waiting ${TIME_BETWEEN_REQUESTS / 1000}s before next request...`);
+                    await sleep(TIME_BETWEEN_REQUESTS);
+                }
+                break; // Sortie de la boucle si succès
+            } catch (error: any) {
+                if (error.response?.status === 429) {
+                    const retryAfter = parseInt(error.response.headers["retry-after"] || "20", 10) * 1000;
+                    console.warn(`🚨 Rate limit exceeded. Retrying in ${retryAfter / 1000}s...`);
+                    await sleep(retryAfter);
+                    retries++;
+                } else {
+                    console.error("❌ Error sending chunk:", error);
+                    throw error;
+                }
+            }
+        }
+
+        if (retries === maxRetries) {
+            throw new Error("🚨 Max retries reached. OpenAI is still rate-limited.");
+        }
+    }
+}
 
   async askQuestion(question: string) {
     this.messages.push({ role: "user", content: question });
