@@ -4,7 +4,7 @@
 
 Ce projet permet de télécharger des documents GitBook et de les analyser à l'aide d'un modèle de langage (LLM) comme ChatGPT. Les utilisateurs peuvent poser des questions sur la documentation téléchargée via un terminal.
 
-![Terminal GIF](images/termLlm.gif)
+![Terminal GIF](image/termLlm.gif)
 
 ## Cloner le projet
 
