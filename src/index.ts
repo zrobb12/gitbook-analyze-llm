@@ -23,7 +23,6 @@ const getSrapping = async (gitbookUrl: string, outputFile: string) => {
   }
 };
 
-
 function splitTextIntoChunks(text: string, maxTokens = 4000): string[] {
   const words = text.split(" ");
   let chunks: string[] = [];
@@ -47,8 +46,6 @@ const start = async (gitbookUrl: string, outputFile: string) => {
     const markdownContent = await getSrapping(gitbookUrl, outputFile);
     const markdownChunksSplit = splitTextIntoChunks(`${markdownContent}`);
 
-
-
     const promptBase = `
     Here is an excerpt of text from a Markdown file. Read the text carefully and be ready to answer any questions that will be asked about it. Do not respond yet, wait for the question.
 
@@ -56,20 +53,12 @@ const start = async (gitbookUrl: string, outputFile: string) => {
     ${markdownContent}
 
     Now, I will ask you questions about this text.`;
-  /*  const promptBase = `
-I will now send you multiple parts of a Markdown file, one by one. Read each part carefully and remember the content. Do not respond yet, just store the information.
 
-Once I finish sending all parts, I will start asking questions about the text. You should answer based only on the information I provided.
-
-Let me know when you're ready to receive the first part.
-`;
-
-*/
     const chatgpt = new Llm(
       `${process.env.API}`,
       promptBase,
-      "gpt-4o-mini",
-      "chatgpt"
+      "venice-uncensored",   // <-- Venice model name
+      "venice"
     );
     await chatgpt.start();
   } catch (error) {
