@@ -8,11 +8,14 @@ export class Llm {
   rl: readline.Interface;
   messages: any;
   model: string;
-    name: string;
+  name: string;
   constructor(apiKey: string, promptBase: string, model: string, name: string) {
     this.model = model;
     this.name = name;
-    this.openai = new OpenAI({ apiKey });
+    this.openai = new OpenAI({ 
+      apiKey, 
+      baseURL: "https://api.venice.ai/v1" // <<--- Venice endpoint
+    });
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -71,7 +74,7 @@ export class Llm {
         }
 
         if (retries === maxRetries) {
-            throw new Error("🚨 Max retries reached. OpenAI is still rate-limited.");
+            throw new Error("🚨 Max retries reached. Venice is still rate-limited.");
         }
     }
 }
