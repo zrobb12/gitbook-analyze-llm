@@ -57,7 +57,7 @@ const start = async (gitbookUrl: string, outputFile: string) => {
     const chatgpt = new Llm(
       `${process.env.API}`,
       promptBase,
-      "venice-text",   // <-- Venice model name
+      "gpt-4o",   // <-- Venice model name
       "venice"
     );
     await chatgpt.start();
